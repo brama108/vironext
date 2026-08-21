@@ -1,0 +1,5 @@
+name: sm_parallel
+channels:
+  - conda-forge
+dependencies:
+  - parallel

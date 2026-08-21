@@ -1,0 +1,6 @@
+name: sm_validatefastq
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - biopet-validatefastq==0.1.1

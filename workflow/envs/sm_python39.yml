@@ -1,0 +1,12 @@
+name: sm_python39
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.9
+  - pandas=2.0.3
+  - conda-forge::plotly
+  - conda-forge::kaleido-core
+  - conda-forge::ipywidgets
+prefix: /data/home/AD/brama/mambaforge/envs/sm_python39

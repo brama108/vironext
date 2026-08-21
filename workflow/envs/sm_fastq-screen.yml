@@ -1,0 +1,6 @@
+name: sm_fastq-screen
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - fastq-screen=0.15.3

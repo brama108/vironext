@@ -1,0 +1,5 @@
+RVDB: "29.0" # Version of RVDB database to use in case RVDB_fasta is not provided
+RVDB_fasta: "" # leave empty to download and process new RVDB data
+acc2taxid: "" # leave empty to download new nucl_gb.accession2taxid file
+nodes: "" # leave empty to download new nodes.dmp file
+names: "" # leave empty to download new names.dmp file

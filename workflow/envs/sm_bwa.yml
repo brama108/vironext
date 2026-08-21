@@ -1,0 +1,6 @@
+name: sm_bwa
+channels:
+  - bioconda
+dependencies:
+  - bwa==0.7.17
+

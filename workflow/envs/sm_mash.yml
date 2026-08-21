@@ -1,0 +1,5 @@
+name: sm_mash
+channels:
+  - bioconda
+dependencies:
+  - mash=2.3

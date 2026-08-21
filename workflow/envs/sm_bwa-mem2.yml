@@ -1,0 +1,11 @@
+name: sm_bwa-mem2
+channels:
+  - bioconda
+dependencies:
+  - conda-forge/linux-64::_libgcc_mutex==0.1=conda_forge
+  - conda-forge/linux-64::libgomp==13.2.0=h77fa898_10
+  - conda-forge/linux-64::_openmp_mutex==4.5=2_gnu
+  - conda-forge/linux-64::libgcc-ng==13.2.0=h77fa898_10
+  - conda-forge/linux-64::libstdcxx-ng==13.2.0=hc0a3c3a_10
+  - conda-forge/linux-64::zlib==1.2.11=h36c2ea0_1011
+  - bioconda/linux-64::bwa-mem2==2.2.1=h9a82719_1

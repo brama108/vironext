@@ -1,0 +1,29 @@
+sampledir: "fastqs"
+pipeline_version: 1.0.0
+protein_database_kaiju: "protRVDBv29"
+protein_database_diamond: "nr_clustered (access date 2025-12-01)"
+
+# filter parameters
+parameters:
+  min_number_regions: 3 # minimum number of non-adjacent regions for a species to be reported
+  min_covbases: 500 # alternative minimum number of covered bases for a species to be reported
+  min_region_length: 150 # minimum length of aligning regions for a species to be reported
+  read_cutoff_ML: 100 # minimum number of reads mapping to a contig to be considered for ML classification
+
+databases:
+  home: "/path/to/data"
+  micop_data: "{databases.home}/path/to/vironext_databases"
+  RVDB_description: "contaRemoved_condC-RVDBv29.0"
+  RVDB_blast_description: "contaRemoved_C-RVDBv29.0"
+  krona_taxonomy: "{databases.micop_data}/krona_taxonomy"
+  taxonomy_db: "{databases.micop_data}/NCBI_taxonomy/{databases.RVDB_description}_dmpfiles.db"
+  micop_acc2info: "{databases.micop_data}/accession2info/accession2info_{databases.RVDB_description}.txt"
+  condensed_RVDB: "{databases.micop_data}/{databases.RVDB_description}/{databases.RVDB_description}.fasta"
+  blast_RVDB: "{databases.micop_data}/blast/{databases.RVDB_blast_description}_blastdb_out.fasta"
+  diamond__classify_contigs: "{databases.micop_data}/diamond/diamond_clustered_nr/nr_cluster.dmnd"
+  kaiju_nodes_dmp: "{databases.micop_data}/kaiju_files/nodes.dmp"
+  kaiju_names_dmp: "{databases.micop_data}/kaiju_files/names.dmp"
+  kaiju_index: "{databases.micop_data}/kaiju_files/kaiju_db_rvdb.fmi"
+  cdb_index: "{databases.micop_data}/{databases.RVDB_description}/{databases.RVDB_description}.fasta.cidx"
+  virhunter_weights: "{databases.micop_data}/virhunter_models"
+  

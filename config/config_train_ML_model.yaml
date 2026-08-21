@@ -1,0 +1,3 @@
+RVDB_fasta: "/data/home/AD/macma/test4/db_out/C-RVDBv29.0_annotated_filtered.fasta" # filtered and annotated RVDB file from "prepare_RVDB" pipeline
+bacteria_fasta: "/data/home/AD/macma/test2/db_in/bacteria.fasta" # leave empty to download new data
+human_fasta: "/data/home/AD/macma/test2/db_in/chm13v2.0.fasta" # leave empty to download new data. Must have .fasta file extension.

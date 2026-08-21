@@ -1,0 +1,11 @@
+name: sm_blastn
+channels:
+  - kantorlab
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - blastdb=2.7.1=0
+  - blastn=2.7.1=0
+  - libidn11
+prefix: /data/home/AD/brama/mambaforge/envs/sm_blastn

@@ -1,0 +1,6 @@
+name: sm_krona
+channels:
+  - bioconda
+dependencies:
+  - krona=2.7.1
+

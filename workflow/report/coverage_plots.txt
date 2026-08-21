@@ -1,0 +1,1 @@
+All alignments are visualized (including multimapping reads).

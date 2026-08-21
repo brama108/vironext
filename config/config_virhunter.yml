@@ -1,0 +1,23 @@
+prepare_ds:
+    path_virus: <A>
+    path_plant: <B>
+    path_bact: <C>
+    out_path: <D>
+    n_cpus: 64
+    random_seed: 5
+
+train:
+    ds_path: <E>
+    out_path: <F>
+    epochs: 10
+    n_cpus: 36
+    random_seed: 5
+
+predict:
+    test_ds: <G>
+    weights: <H>
+    out_path: <I>
+    n_cpus: 36
+    return_viral: True
+    limit: 500
+
