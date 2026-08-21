@@ -1,0 +1,6 @@
+name: sm_wordcloud
+channels:
+  - conda-forge
+dependencies:
+  - wordcloud=1.9.3 
+

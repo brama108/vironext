@@ -1,0 +1,5 @@
+name: sm_cutadapt
+channels:
+  - bioconda
+dependencies:
+  - cutadapt=4.4

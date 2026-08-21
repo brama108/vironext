@@ -1,0 +1,6 @@
+name: sm_bedgraphtobigwig
+channels:
+  - bioconda
+dependencies:
+  - ucsc-bedgraphtobigwig=445
+

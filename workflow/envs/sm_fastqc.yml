@@ -1,0 +1,6 @@
+name: sm_fastqc
+channels:
+  - bioconda
+dependencies:
+  - fastqc=0.12.1
+

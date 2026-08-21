@@ -1,0 +1,42 @@
+configfile: workflow.source_path("../config/config.yaml")
+
+include: "rules/00_common.smk"
+include: "rules/01_quality_control.smk"
+include: "rules/02_remove_contamination.smk"
+include: "rules/03_trimming.smk"
+include: "rules/04_mapping.smk"
+include: "rules/05_process_sam.smk"
+include: "rules/06_filter_mapQ.smk"
+include: "rules/07_adjust_multimappers.smk"
+include: "rules/08_compute_abundances.smk"
+include: "rules/09_extract_accessions.smk"
+include: "rules/10_extract_reads.smk"
+include: "rules/11_validate_calls.smk"
+include: "rules/12_consolidate_calls.smk"
+include: "rules/13_preliminary_coverages.smk"
+include: "rules/14_realignment.smk"
+include: "rules/15_determine_alignment_certainty.smk"
+include: "rules/16_create_bigwigs.smk"
+include: "rules/17_create_coverage_plot.smk"
+include: "rules/18_create_consenus_sequence.smk"
+include: "rules/19_predict_viruses.smk"
+include: "rules/20_revalidate_blast.smk"
+include: "rules/21_create_final_identification_blast.smk"
+include: "rules/22_classify_contigs.smk"
+include: "rules/23_create_htmls_ai.smk"
+include: "rules/24_create_pie_chart.smk"
+include: "rules/25_create_word_cloud.smk"
+include: "rules/26_create_htmls.smk"
+include: "rules/27_qm_metrics.smk"
+include: "rules/28_create_snakemake_report.smk"
+
+# 2 rules produce the same output, so we need to define which one should be executed
+if read_type == "single_end":
+    ruleorder: trimming_single > trimming_paired > assemble_contigs_single > assemble_contigs_paired > extract_unmapped_reads_single > extract_unmapped_reads_paired
+else:
+    ruleorder: trimming_paired > trimming_single > assemble_contigs_paired > assemble_contigs_single > extract_unmapped_reads_paired > extract_unmapped_reads_single
+
+
+rule all:
+    input:
+        report=f"report_pipelineV{config['pipeline_version']}_{config['databases']['RVDB_description']}.html",

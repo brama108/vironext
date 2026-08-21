@@ -1,0 +1,5 @@
+name: sm_cdbtools
+channels:
+  - bioconda
+dependencies:
+  - cdbtools

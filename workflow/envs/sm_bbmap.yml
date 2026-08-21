@@ -1,0 +1,5 @@
+name: sm_bbmap
+channels:
+  - bioconda
+dependencies:
+  - bbmap=39.01

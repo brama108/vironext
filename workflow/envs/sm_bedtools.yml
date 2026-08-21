@@ -1,0 +1,6 @@
+name: sm_bedtools
+channels:
+  - bioconda
+dependencies:
+  - bedtools=2.31.0
+
