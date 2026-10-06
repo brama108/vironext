@@ -70,9 +70,10 @@ rule assemble_contigs_paired:
     input:
         mate1_unmapped=rules.extract_unmapped_reads_paired.output.mate1_unmapped,
         mate2_unmapped=rules.extract_unmapped_reads_paired.output.mate2_unmapped
-
     benchmark:
         "benchmarks/13_ML_predict_virus/assembled_contigs_{sample}/contigs_benchmark.txt"
+    params:
+        tmp_dir=config["tmp_dir"]
     conda:
         "sm_spades"
         #"../envs/spades.yml"
@@ -84,7 +85,7 @@ rule assemble_contigs_paired:
             spades.py \
                 --rnaviral \
                 -t {threads} \
-                --tmp-dir /data/shared/tmp \
+                --tmp-dir {params.tmp_dir} \
                 -1 {input.mate1_unmapped} \
                 -2 {input.mate2_unmapped} \
                 -o 13_ML_predict_virus/assembled_contigs_{wildcards.sample}
@@ -103,6 +104,8 @@ rule assemble_contigs_single:
         mate1_unmapped=rules.extract_unmapped_reads_single.output.mate1_unmapped,
     benchmark:
         "benchmarks/13_ML_predict_virus/assembled_contigs_{sample}/contigs_benchmark.txt"
+    params:
+        tmp_dir=config["tmp_dir"]
     conda:
         "sm_spades"
         #"../envs/spades.yml"
@@ -114,7 +117,7 @@ rule assemble_contigs_single:
             spades.py \
                 --rnaviral \
                 -t {threads} \
-                --tmp-dir /data/shared/tmp \
+                --tmp-dir {params.tmp_dir} \
                 -s {input.mate1_unmapped} \
                 -o 13_ML_predict_virus/assembled_contigs_{wildcards.sample}
         else

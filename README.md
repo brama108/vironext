@@ -162,15 +162,19 @@ Intermediate files are retained to ensure reproducibility.
 A complete example analysis is included in the repository.
 
 ```
-docs/
-└── examples/
-    ├── sample_R1.fastq.gz
-    ├── sample_R2.fastq.gz
-    ├── sample_report.html
-    └── README.md
+├── example/
+│   ├── data/
+│   │   └── cs063_R1_001.fastq.gz
+│   └── expected_results/
+│       ├── IGV/
+│       │   ├── cs063_R1R2_sorted_filtered.bam
+│       │   ├── cs063_R1R2_sorted_filtered.bam.bai
+│       │   └── cs063_references.fasta
+│       └── cs063_v1.0.1_report.html
+
 ```
 
-The example dataset (~5,000–10,000 reads) allows users to verify their installation and explore the generated report without using their own sequencing data.
+The example dataset allows users to verify their installation and explore the generated report without using their own sequencing data.
 
 ---
 
@@ -197,7 +201,15 @@ Until then, please cite this GitHub repository.
 
 # License
 
-**License information will be added later.**
+ViroNEXT is free and open-source software licensed under the
+GNU General Public License version 3.0 (GPL-3.0-only).
+
+You may use, modify, and redistribute ViroNEXT under the terms
+of this license. Distributed modified versions must comply with
+the GPL-3.0 license requirements, including making the
+corresponding source code available to recipients.
+
+See the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -222,5 +234,5 @@ Paul-Ehrlich-Straße 51-59
 63225 Langen  
 Germany
 
-📧 markus [dot] braun [at] pei [dot] de
+📧 bioinformatics [at] pei [dot] de
 

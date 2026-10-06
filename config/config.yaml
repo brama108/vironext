@@ -1,5 +1,5 @@
 sampledir: "fastqs"
-pipeline_version: 1.0.0
+pipeline_version: 1.0.1
 protein_database_kaiju: "protRVDBv29"
 protein_database_diamond: "nr_clustered (access date 2025-12-01)"
 
@@ -27,3 +27,8 @@ databases:
   cdb_index: "{databases.micop_data}/{databases.RVDB_description}/{databases.RVDB_description}.fasta.cidx"
   virhunter_weights: "{databases.micop_data}/virhunter_models"
   
+adapters:
+  R1: "../../resources/adapters/illumina_R1.fasta"
+  R2: "../../resources/adapters/illumina_R2.fasta"
+
+tmp_dir: "/path/to/tmp"

@@ -135,7 +135,7 @@ def create_species_table_html(
             except (IndexError, ValueError):
                 coverage_percent = "-"  # if taxid not shown in the coverage plots (IndexError), if taxid=unclassified (ValueError)
             # Set link to NCBI
-            link = f"https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={taxid}&lvl=3&lin=f&keep=1&srchmode=1&unlock"
+            link = f"https://www.ncbi.nlm.nih.gov/datasets/taxonomy/{taxid}"
 
             # Set style for each row of the table
             row_style = "font-style: italic;" if values[7].strip()=="True" else ""
@@ -144,7 +144,7 @@ def create_species_table_html(
             ## taxids with insufficient reads will not be schown in this table and all html files
             modified_species_table_file.write(f"""
     <tr style="{row_style}">
-    <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><a href={link}>{taxid}</a></td>
+    <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><a href={link} target='_blank' rel='noopener noreferrer'>{taxid}</a></td>
     <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{species_name}</td>
     <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{blast_hit}</td>
     <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{blast_classification}</td>
