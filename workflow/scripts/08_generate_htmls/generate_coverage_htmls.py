@@ -201,84 +201,6 @@ def is_empty(file_path: str) -> bool:
     else:
         raise FileNotFoundError(f"The file '{file_path}' does not exist.")
 
-def load_coverage_table(coverage_table_path: str) -> pd.DataFrame:
-    """
-    Load a coverage table from a samtools coverage-generated text file
-    into a pandas DataFrame.
-
-    Parameters
-    ----------
-    coverage_table_path : str
-        The path to the coverage table file.
-
-    Returns
-    -------
-    pd.DataFrame
-        A DataFrame containing the coverage data.
-    """
-    coverage_df = pd.read_csv(
-    coverage_table_path,
-    sep="\t",
-    header=0,
-    names=[
-        "Reference", "startpos", "endpos", "numreads",
-        "covbases", "coverage", "meandepth", "meanbaseq", "meanmapq"
-    ],
-    dtype={
-        "Reference": str,
-
-        "numreads": int,
-
-    }
-    )
-
-
-    coverage_df = coverage_df[coverage_df["numreads"] != 0]
-    return coverage_df
-
-def map_accession_to_species_taxid(taxonomy_data: pd.DataFrame, coverage_table_df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Map accession numbers in the coverage table to TaxIDs.
-
-    Parameters
-    ----------
-    taxonomy_data : pd.Dataframe
-        DataFrame containing taxonomy information with accession to taxid and scientific name mapping.
-    coverage_table_df : pd.DataFrame
-        DataFrame containing the coverage data.
-
-    Returns
-    -------
-    coverage_table_mapped_df : pd.Dataframe
-        DataFrame with accession numbers mapped to scientific names and TaxIDs.
-    """
-    
-    coverage_table_merged_df = coverage_table_df.merge(
-        taxonomy_data,
-        left_on="Reference",
-        right_on="Accession Version_DB",
-        how="left"
-    )
-    
-    return coverage_table_merged_df
-
-def add_scientiific_name(taxonomy_data: dict, taxid: str) -> str:
-    """
-    Add scientific name to a given taxid using the taxonomy data.
-
-    Parameters
-    ----------
-    taxonomy_data : pd.DataFrame
-        DataFrame containing taxonomy information with taxid and scientific name mapping.
-    taxid : str
-        The taxid for which to retrieve the scientific name.
-
-    Returns
-    -------
-    str
-        The scientific name corresponding to the given taxid.
-    """
-    return taxonomy_data[taxid][2]
 
 def fasta2df(multifasta_path: str) -> pd.DataFrame:
     """
@@ -318,8 +240,7 @@ def fasta2df(multifasta_path: str) -> pd.DataFrame:
         )
     return db_df
 
-def create_coverage_graph_html(coverage_table_file_in_path: pd.DataFrame,
-                               graph_file_in_path: str,
+def create_coverage_graph_html(graph_file_in_path: str,
                                 modified_graph_file_out_path: str,
                                 coverage_percent_file_out_path: str,
                                 html_head: str,
@@ -327,7 +248,7 @@ def create_coverage_graph_html(coverage_table_file_in_path: pd.DataFrame,
                                 node2parent_taxid: dict,
                                 len2taxid_merge: pd.DataFrame,
                                 consensus_df: pd.DataFrame,
-                                species_identification_table_in_path: str,
+                                species_identification_table_in_path: str
                                 ) -> None:
     """
     Create a HTML from a text file including species names.
@@ -367,7 +288,7 @@ def create_coverage_graph_html(coverage_table_file_in_path: pd.DataFrame,
 
     modified_graph_file = open(modified_graph_file_out_path, "a")
     modified_graph_file.write(html_head)
-    modified_graph_file.write(f"<h1 class=header>Sample: snakemake.wildcards.sample</h1><p class=text>Coverage plots of the taxa found by the pipeline.</p><br><br>")
+    modified_graph_file.write(f"<h1 class=header>Sample: {snakemake.wildcards.sample}</h1><p class=text>Coverage plots of the taxa found by the pipeline.</p><br><br>")
     with open(graph_file_in_path, "r") as graph_fh:
         i = 0
         for line in graph_fh:
@@ -412,7 +333,7 @@ def create_coverage_graph_html(coverage_table_file_in_path: pd.DataFrame,
                 
                 # Set links to NCBI
                 link_accession = f"https://www.ncbi.nlm.nih.gov/nuccore/{accession}"
-                link_taxid = f"https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={to_be_appended_taxids[0]}&lvl=3&lin=f&keep=1&srchmode=1&unlock"
+                link_taxid = f"https://www.ncbi.nlm.nih.gov/datasets/taxonomy/{to_be_appended_taxids[0]}"
                 link_parent_taxid = f"https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={to_be_appended_taxids[1]}&lvl=3&lin=f&keep=1&srchmode=1&unlock"
                 link_parent_parent_taxid = f"https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={to_be_appended_taxids[2]}&lvl=3&lin=f&keep=1&srchmode=1&unlock"
                 link_parent_parent_parent_taxid = f"https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={to_be_appended_taxids[3]}&lvl=3&lin=f&keep=1&srchmode=1&unlock"
@@ -422,9 +343,9 @@ def create_coverage_graph_html(coverage_table_file_in_path: pd.DataFrame,
                 taxid_set = set(final_identification_table_filtered_df["taxid"].values)
                 filters_passed = "IDENTIFIED" if any(t in taxid_set for t in to_be_appended_taxids) else "FILTERED OUT"
                 # Form the strings to be appended to html file
-                to_be_appended = f"<b>{filters_passed}</b> - {to_be_appended_name} (<a href={link_accession}>{accession}</a>, TaxID <a href={link_taxid}>{to_be_appended_taxids[0]}</a>, 1-level-up TaxID <a href={link_parent_taxid}>{to_be_appended_taxids[1]}</a>, 2-levels-up TaxID <a href={link_parent_parent_taxid}>{to_be_appended_taxids[2]}</a>, 3-levels-up TaxID <a href={link_parent_parent_parent_taxid}>{to_be_appended_taxids[3]}</a>) {sequence_length}\n"
+                to_be_appended = f"<b>{filters_passed}</b> - {to_be_appended_name} (<a href={link_accession} target='_blank' rel='noopener noreferrer'>{accession}</a>, TaxID <a href={link_taxid} target='_blank' rel='noopener noreferrer'>{to_be_appended_taxids[0]}</a>, 1-level-up TaxID <a href={link_parent_taxid}>{to_be_appended_taxids[1]}</a>, 2-levels-up TaxID <a href={link_parent_parent_taxid}>{to_be_appended_taxids[2]}</a>, 3-levels-up TaxID <a href={link_parent_parent_parent_taxid}>{to_be_appended_taxids[3]}</a>) {sequence_length}\n"
                 
-                fasta_header = f">snakemake.wildcards.sample {accession} {to_be_appended_name} taxid {to_be_appended_taxids[0]}"
+                fasta_header = f">{snakemake.wildcards.sample} {accession} {to_be_appended_name} taxid {to_be_appended_taxids[0]}"
                 fasta_sequence = f"{fasta_header}\n{consensus_sequence}"
                 sequence_fasta_format = urllib.parse.quote(fasta_sequence)
 
@@ -448,11 +369,6 @@ def create_coverage_graph_html(coverage_table_file_in_path: pd.DataFrame,
                         modified_graph_file.write(
     f'<button class="copy-btn" onclick="openBlast(\'https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&LAYOUT=OneWindows&AUTO_FORMAT=Fullauto&PAGE=Nucleotides&NCBI_GI=yes&FILTER=L&HITLIST_SIZE=100&SHOW_OVERVIEW=yes&AUTO_FORMAT=yes&SHOW_LINKOUT=yes&QUERY={sequence_fasta_format}\')">Blast consensus sequence</button>'
 )
-                        modified_graph_file.write(
-    f'''<button class="copy-btn accordion">+</button>
-                        <div class="panel">
-                        <p>Lorem ipsum...</p>
-                        </div>''')
                         modified_graph_file.write("<p><u class=text>BLAST results:</u></p>")
                         blast_info = final_identification_table_df[final_identification_table_df['taxid'].isin(to_be_appended_taxids)]
                         link_blast_accession = f"https://www.ncbi.nlm.nih.gov/nuccore/{blast_info['accession'].values[0]}"
@@ -469,30 +385,23 @@ def create_coverage_graph_html(coverage_table_file_in_path: pd.DataFrame,
             i += 1
         modified_graph_file.write(html_tail)
     modified_graph_file.close()
-
-
-coverages_graph_file_path = r"/projects/brama/pipeline_tests/v0.30.5_segmented_viruses/15_realignment/05_coverages/sim_reads_InfA_S4S6_R1R2_sorted_filtered_selected_accessions_sorted.graph.txt"
-coverages_table_file_path = r"/projects/brama/pipeline_tests/v0.30.5_segmented_viruses/08_extract_high_coverage_species/sim_reads_InfA_S4S6_R1R2_sorted_filtered.txt"
-
-consensus_sequences_path = r"/projects/brama/pipeline_tests/v0.30.5_segmented_viruses/15_realignment/07_consenus_sequence/sim_reads_InfA_S4S6_R1R2_sorted_filtered_selected_accessions_sorted_consensus.fasta"
-final_species_identification_table_path = r"/projects/brama/pipeline_tests/v0.30.5_segmented_viruses/16_revalidation_blast/final_classification/sim_reads_InfA_S4S6_R1R2_sorted_filtered_selected_accessions_sorted_consensus_blast_final_identification.out"
-coverag_plot_html_out_path = r"/projects/brama/pipeline_tests/v0.30.5_segmented_viruses/15_realignment/05_coverages/sim_reads_InfA_S4S6.html"
-coverage_percent_out_path = r"/projects/brama/pipeline_tests/v0.30.5_segmented_viruses/15_realignment/05_coverages/sim_reads_InfA_S4S6_coverage_percent.txt"
-taxonomy_database = r"/data/raw/Koenig/250128.bloodvir_MicopRequiredData/NCBI_taxonomy/contaRemoved_condC-RVDBv29.0_dmpfiles.db"
-# coverages_graph_file_path = snakemake.input[0]
-# consensus_sequences_path = snakemake.input[1]
-# final_species_identification_table_path = snakemake.input[2]
-# coverag_plot_html_out_path = snakemake.output[0]
-# coverage_percent_out_path = snakemake.output[1]
-# taxonomy_database = snakemake.params[0]
+# coverages_graph_file_path = r"/projects/brama/bloodvir/230100_NYC/batch4_alilen0/15_realignment/05_coverages/437_S12_L001_R1R2_sorted_filtered_selected_accessions_sorted.graph.txt"
+# consensus_sequences_path = r"/projects/brama/bloodvir/230100_NYC/batch4_alilen0/15_realignment/06_consenus_sequence/437_S12_L001_R1R2_sorted_filtered_selected_accessions_sorted_consensus.fasta"
+# final_species_identification_table_path = r"/projects/brama/bloodvir/230100_NYC/batch4_alilen0/16_revalidation_blast/final_classification/437_S12_L001_R1R2_sorted_filtered_selected_accessions_sorted_consensus_blast_final_identification.out"
+# coverag_plot_html_out_path = r"/projects/brama/bloodvir/230100_NYC/batch4_alilen0/15_realignment/05_coverages/437_S12_L001_2.html"
+# coverage_percent_out_path = r"/projects/brama/bloodvir/230100_NYC/batch4_alilen0/15_realignment/05_coverages/coverage_percent.txt"
+# taxonomy_database = r"/data/raw/Koenig/250128.bloodvir_MicopRequiredData/NCBI_taxonomy/contaRemoved_condC-RVDBv29.0_dmpfiles.db"
+coverages_graph_file_path = snakemake.input[0]
+consensus_sequences_path = snakemake.input[1]
+final_species_identification_table_path = snakemake.input[2]
+coverag_plot_html_out_path = snakemake.output[0]
+coverage_percent_out_path = snakemake.output[1]
+taxonomy_database = snakemake.params[0]
 
 if not is_empty(coverages_graph_file_path):
     consensus_seqs_df = fasta2df(consensus_sequences_path)
     len2taxid_df, node2par_taxid_dict = load_taxonomy(taxonomy_database)
-    coverages_table_df = load_coverage_table(coverages_table_file_path)
-    coverages_table_df = map_accession_to_species_taxid(len2taxid_df, coverages_table_df)
-    coverages_table_df["scientific_name"] = coverages_table_df["taxid"].apply(lambda x: add_scientiific_name(node2par_taxid_dict, str(x)))
-    create_coverage_graph_html(coverages_table_df, coverages_graph_file_path, coverag_plot_html_out_path, coverage_percent_out_path, HTML_HEAD, HTML_TAIL, node2par_taxid_dict, len2taxid_df, consensus_seqs_df, final_species_identification_table_path)
+    create_coverage_graph_html(coverages_graph_file_path, coverag_plot_html_out_path, coverage_percent_out_path, HTML_HEAD, HTML_TAIL, node2par_taxid_dict, len2taxid_df, consensus_seqs_df, final_species_identification_table_path)
 else:
     with open(coverag_plot_html_out_path, "w") as coverage_plots_html_fout:
         coverage_plots_html_fout.write("no plots to show")

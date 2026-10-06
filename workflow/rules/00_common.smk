@@ -1,4 +1,5 @@
 import dynamic_yaml
+import json
 import os
 import sys
 
@@ -38,6 +39,14 @@ def extract_path_to_snakefile():
         index = sys.argv.index("--snakefile")
     snakefile_path = sys.argv[index + 1]
     return snakefile_path
+
+def get_quality_trim(chemistry_file):
+    with open(chemistry_file) as fin:
+        data = json.load(fin)
+    if data["chemistry"] == "2-color":
+        return "--nextseq-trim"
+    else:
+        return "-q"
 
 path = config["sampledir"]
 wildcard_pattern = f"{path}/{{sample}}_{{readnum}}_001.fastq.gz"

@@ -50,7 +50,7 @@ rule repair_paired_ends:
     threads: 2
     conda:  "sm_bbmap"
     resources:
-        mem_mb=9216
+        mem_mb=56320
     message: """--- Repairing mates:
     {input.mate1} and {input.mate2} 
     with repair.sh (bbtools) using {threads} cores and {resources.mem_mb} MB of RAM."""

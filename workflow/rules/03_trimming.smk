@@ -1,3 +1,23 @@
+rule detect_illumina_chemistry:
+    """
+    Determine Illumina sequencer that was used to generate the data.
+    This information (color-chemistry) will be used in trimming.
+    """
+    input:
+        mate1="00_remove_contamination/{sample}_R1_001.tagged_filter.fastq.gz",
+    output:
+        chemistry="03_cutadapt/illumina_instrument_{sample}_R1_001.json"
+    log:
+        "sn_logs/03_cutadapt/illumina_instrument_{sample}.log",
+    benchmark:
+        "benchmarks/03_cutadapt/illumina_instrument_{sample}_benchmark.txt",
+    threads: 4
+    conda: "sm_python39"
+    resources:
+        mem_mb=200
+    script:
+          "../scripts/00_detect_illumina_chemistry/detect_illumina_chemistry.py"
+
 rule trimming_paired:
     """
     Trim paired-end reads.
@@ -5,6 +25,9 @@ rule trimming_paired:
     input:
         mate1="02_repair_mates/{sample}_R1_001.tagged_filter.repair.fastq",
         mate2="02_repair_mates/{sample}_R2_001.tagged_filter.repair.fastq",
+        chemistry=rules.detect_illumina_chemistry.output.chemistry,
+        illumina_adapters_R1=workflow.source_path(config["adapters"]["R1"]),
+        illumina_adapters_R2=workflow.source_path(config["adapters"]["R2"]),
     output:
         mate1_trimmed=temp("03_cutadapt/{sample}_R1_001.fastq"),
         mate2_trimmed=temp("03_cutadapt/{sample}_R2_001.fastq"),
@@ -15,22 +38,21 @@ rule trimming_paired:
     threads: 4
     conda: "sm_cutadapt"
     params:
-        illumina_adapter_R1="AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
-        illumina_adapter_R2="AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
+        quality_trim=lambda wildcards, input:
+            get_quality_trim(input.chemistry),
     resources:
         mem_mb=200
     message: """--- Trimming on:
     {input}
-    with R1 illumina_adapter {params.illumina_adapter_R1} and R2 illumina_adapter {params.illumina_adapter_R2}
     with cutadapt using {threads} cores and {resources.mem_mb} MB of RAM."""
     shell:
         """
         cutadapt \
-        -a {params.illumina_adapter_R1} \
-        -A {params.illumina_adapter_R2} \
+        -a file:{input.illumina_adapters_R1} \
+        -A file:{input.illumina_adapters_R2} \
         --times 1 \
         --cores {threads} \
-        --nextseq-trim=30 \
+        {params.quality_trim}=29 \
         --output {output.mate1_trimmed} \
         --paired-output {output.mate2_trimmed} \
         {input.mate1} {input.mate2} > {log}
@@ -42,6 +64,8 @@ rule trimming_single:
     """
     input:
         mate1="00_remove_contamination/{sample}_R1_001.tagged_filter.fastq.gz",
+        chemistry=rules.detect_illumina_chemistry.output.chemistry,
+        illumina_adapters_R1=workflow.source_path(config["adapters"]["R1"]),
     output:
         mate1_trimmed=temp("03_cutadapt/{sample}_R1_001.fastq"),
     log:
@@ -51,20 +75,20 @@ rule trimming_single:
     threads: 4
     conda: "sm_cutadapt"
     params:
-        illumina_adapter_R1="AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+        quality_trim=lambda wildcards, input:
+            get_quality_trim(input.chemistry),
     resources:
         mem_mb=200
     message: """--- Trimming on:
     {input}
-    with R1 illumina_adapter {params.illumina_adapter_R1} 
     using cutadapt on {threads} cores and {resources.mem_mb} MB of RAM."""
     shell:
         """
         cutadapt \
-        -a {params.illumina_adapter_R1} \
+        -a file:{input.illumina_adapters_R1} \
         --times 1 \
         --cores {threads} \
-        --nextseq-trim=30 \
+        {params.quality_trim}=29 \
         --output {output.mate1_trimmed} \
         {input.mate1} > {log}
         """
